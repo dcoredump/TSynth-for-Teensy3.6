@@ -48,16 +48,26 @@ extern const int16_t AudioWaveformSine[257];
 #define WAVEFORM_SAWTOOTH_REVERSE  6
 #define WAVEFORM_SAMPLE_HOLD       7
 #define WAVEFORM_TRIANGLE_VARIABLE 8
-#define WAVEFORM_SILENT			   9
+#define WAVEFORM_SILENT		   9
+#define WAVEFORM_FOURIER_SQUARE    10
+#define WAVEFORM_FOURIER_TRIANGLE  11
+#define WAVEFORM_FOURIER_SAWTOOTH  12
+#define WAVEFORM_FOURIER_SAWTOOTH_REVERSE 13
+
+#define WAVEFORM_FOURIER_OFFSET    10
+#define NUM_WAVEFORM_FOURIER       4
 
 class AudioSynthWaveformTS : public AudioStream
 {
 public:
 	AudioSynthWaveformTS(void) : AudioStream(0,NULL),
-		phase_accumulator(0), phase_increment(0), phase_offset(0),
 		magnitude(0), pulse_width(0x40000000),
-		arbdata(NULL), sample(0), tone_type(WAVEFORM_SINE),
-		tone_offset(0),syncFlag(0) {
+		sample(0), tone_type(WAVEFORM_SINE),
+		tone_offset(0),syncFlag(0), num_partials(3) {
+
+		waveform_partial = new float32_t*[NUM_WAVEFORM_FOURIER]
+		for (uint8_t i=0; i<num_partials; i++)
+			waveform_partial[i] = new float32_t[num_partials];
 	}
 
 	void frequency(float freq) {
@@ -66,17 +76,6 @@ public:
 		} else if (freq > AUDIO_SAMPLE_RATE_EXACT / 2) {
 			freq = AUDIO_SAMPLE_RATE_EXACT / 2;
 		}
-		phase_increment = freq * (4294967296.0 / AUDIO_SAMPLE_RATE_EXACT);
-		if (phase_increment > 0x7FFE0000u) phase_increment = 0x7FFE0000;
-	}
-	void phase(float angle) {
-		if (angle < 0.0) {
-			angle = 0.0;
-		} else if (angle > 360.0) {
-			angle = angle - 360.0;
-			if (angle >= 360.0) return;
-		}
-		phase_offset = angle * (4294967296.0 / 360.0);
 	}
 	
 	void sync() {
@@ -123,16 +122,13 @@ public:
 	virtual void update(void);
 
 private:
-	uint32_t phase_accumulator;
-	uint32_t phase_increment;
-	uint32_t phase_offset;
-	int32_t  magnitude;
+	float32_t amp;
 	uint32_t pulse_width;
-	const int16_t *arbdata;
-	int16_t  sample; // for WAVEFORM_SAMPLE_HOLD
 	short    tone_type;
-	int16_t  tone_offset;
+	float32_t  tone_offset;
 	int16_t   syncFlag;
+	int8_t num_partials;
+	float32_t** waveform_partial;
 };
 
 
@@ -142,7 +138,9 @@ public:
 	AudioSynthWaveformModulatedTS(void) : AudioStream(2, inputQueueArray),
 		phase_accumulator(0), phase_increment(0), modulation_factor(32768),
 		magnitude(0), arbdata(NULL), sample(0), tone_offset(0),
-		tone_type(WAVEFORM_SINE), modulation_type(0),syncFlag(0) {
+		tone_type(WAVEFORM_SINE), modulation_type(0),syncFlag(0),
+       		num_partials(3)	{
+		partial = new float32_t[num_partials];
 	}
 
 	void frequency(float freq) {
@@ -217,7 +215,8 @@ private:
 	uint8_t  tone_type;
 	uint8_t  modulation_type;
 	int16_t   syncFlag;
+	uint8_t num_partials;
+	float32_t* partials;
 };
-
 
 #endif

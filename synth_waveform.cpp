@@ -178,6 +178,14 @@ void AudioSynthWaveformTS::update(void)
 			ph = newph;
 		}
 		break;
+	case WAVEFORM_FOURIER_SQUARE:
+		break;
+	case WAVEFORM_FOURIER_TRIANGLE:
+		break;
+	case WAVEFORM_FOURIER_SAWTOOTH:
+		break;
+	case WAVEFORM_FOURIER_SAWTOOTH_REVERSE:
+		break;
 	}
 	phase_accumulator = ph - phase_offset;
 
@@ -410,6 +418,14 @@ void AudioSynthWaveformModulatedTS::update(void)
 		}
 		break;
 	}
+	case WAVEFORM_FOURIER_SQUARE:
+		break;
+	case WAVEFORM_FOURIER_TRIANGLE:
+		break;
+	case WAVEFORM_FOURIER_SAWTOOTH:
+		break;
+	case WAVEFORM_FOURIER_SAWTOOTH_REVERSE:
+		break;
 
 	if (tone_offset) {
 		bp = block->data;
