@@ -48,7 +48,7 @@ extern "C" {
 #define WAVEFORM_SAWTOOTH_REVERSE  6
 #define WAVEFORM_SAMPLE_HOLD       7
 #define WAVEFORM_TRIANGLE_VARIABLE 8
-#define WAVEFORM_SILENT			   9
+#define WAVEFORM_SILENT			       9
 #define WAVEFORM_FOURIER_SQUARE    10
 #define WAVEFORM_FOURIER_TRIANGLE  11
 #define WAVEFORM_FOURIER_SAWTOOTH  12
@@ -77,50 +77,6 @@ class AudioSynthWaveformTS : public AudioStream
       generatePartials(WAVEFORM_FOURIER_SQUARE);
       generatePartials(WAVEFORM_FOURIER_TRIANGLE);
       generatePartials(WAVEFORM_FOURIER_SAWTOOTH);
-    }
-
-    void generatePartials(uint8_t waveform)
-    {
-      if (waveform_partial[waveform])
-        delete(waveform_partial[waveform]);
-      waveform_partial[waveform] = new float32_t[partial[waveform]];
-
-      switch (waveform)
-      {
-        case WAVEFORM_FOURIER_SQUARE:
-          /* e.g. Pulse width = 40 % (= 0.4)
-            a0 = A * (Tp/T) = 0.4 / 1 = 0.4
-            an = 2 * (A/(n*PI)) * sin(0.4 * n * PI))
-            (Note that because this example is similar to the previous one, the coefficients are similar, but they are no longer equal to zero for n even.)
-            ===> x(t) = an * cos(2*PI*f*t)
-          */
-          waveform_partial[WAVEFORM_FOURIER_SQUARE - WAVEFORM_FOURIER_OFFSET][0] = pulse_width / 4294967296.0;
-          for (uint8_t i = 1; i < partial[waveform - WAVEFORM_FOURIER_OFFSET]; i++)
-            waveform_partial[WAVEFORM_FOURIER_SQUARE - WAVEFORM_FOURIER_OFFSET][i] = 2.0 * (1.0 / (i * PI)) * arm_sin_f32(pulse_width * i * PI);
-          break;
-        case WAVEFORM_FOURIER_TRIANGLE:
-          /*
-            Note: an = 0 (if n = even, including 0)
-            an = 4 * A * ((1-(-1)^n)/n^2*PI^2)
-            ===> x(t) = an * cos(2*PI*f*t)
-          */
-          for (uint8_t i = 0; i < partial[waveform - WAVEFORM_FOURIER_OFFSET]; i++)
-          {
-            if ((i % 2) == 0)
-              waveform_partial[WAVEFORM_FOURIER_TRIANGLE - WAVEFORM_FOURIER_OFFSET][i] = 0.0;
-            else
-              waveform_partial[WAVEFORM_FOURIER_TRIANGLE - WAVEFORM_FOURIER_OFFSET][i] = 4.0 * (1 - pow(-1, i)) / powf(i, 2) * powf(PI, 2);
-          }
-          break;
-        case WAVEFORM_FOURIER_SAWTOOTH:
-          /*
-            bn = ((2*A)/(n*PI))*(-1)^n
-            ===> x(t) = bn * sin(2*PI*f*t)
-          */
-          for (uint8_t i = 0; i < partial[waveform - WAVEFORM_FOURIER_OFFSET]; i++)
-            waveform_partial[WAVEFORM_FOURIER_SAWTOOTH - WAVEFORM_FOURIER_OFFSET][i] = 2.0 / (i * PI) * pow(-1, i);
-          break;
-      }
     }
 
     void setNumPartials(uint8_t waveform, uint8_t num)
@@ -201,6 +157,50 @@ class AudioSynthWaveformTS : public AudioStream
     virtual void update(void);
 
   private:
+    void generatePartials(uint8_t waveform)
+    {
+      if (waveform_partial[waveform])
+        delete(waveform_partial[waveform]);
+      waveform_partial[waveform] = new float32_t[partial[waveform]];
+
+      switch (waveform)
+      {
+        case WAVEFORM_FOURIER_SQUARE:
+          /* e.g. Pulse width = 40 % (= 0.4)
+            a0 = A * (Tp/T) = 0.4 / 1 = 0.4
+            an = 2 * (A/(n*PI)) * sin(0.4 * n * PI))
+            (Note that because this example is similar to the previous one, the coefficients are similar, but they are no longer equal to zero for n even.)
+            ===> x(t) = an * cos(2*PI*f*t)
+          */
+          waveform_partial[WAVEFORM_FOURIER_SQUARE - WAVEFORM_FOURIER_OFFSET][0] = pulse_width / 4294967296.0;
+          for (uint8_t i = 1; i < partial[waveform - WAVEFORM_FOURIER_OFFSET]; i++)
+            waveform_partial[WAVEFORM_FOURIER_SQUARE - WAVEFORM_FOURIER_OFFSET][i] = 2.0 * (1.0 / (i * PI)) * arm_sin_f32(pulse_width * i * PI);
+          break;
+        case WAVEFORM_FOURIER_TRIANGLE:
+          /*
+            Note: an = 0 (if n = even, including 0)
+            an = 4 * A * ((1-(-1)^n)/n^2*PI^2)
+            ===> x(t) = an * cos(2*PI*f*t)
+          */
+          for (uint8_t i = 0; i < partial[waveform - WAVEFORM_FOURIER_OFFSET]; i++)
+          {
+            if ((i % 2) == 0)
+              waveform_partial[WAVEFORM_FOURIER_TRIANGLE - WAVEFORM_FOURIER_OFFSET][i] = 0.0;
+            else
+              waveform_partial[WAVEFORM_FOURIER_TRIANGLE - WAVEFORM_FOURIER_OFFSET][i] = 4.0 * (1 - pow(-1, i)) / powf(i, 2) * powf(PI, 2);
+          }
+          break;
+        case WAVEFORM_FOURIER_SAWTOOTH:
+          /*
+            bn = ((2*A)/(n*PI))*(-1)^n
+            ===> x(t) = bn * sin(2*PI*f*t)
+          */
+          for (uint8_t i = 0; i < partial[waveform - WAVEFORM_FOURIER_OFFSET]; i++)
+            waveform_partial[WAVEFORM_FOURIER_SAWTOOTH - WAVEFORM_FOURIER_OFFSET][i] = 2.0 / (i * PI) * pow(-1, i);
+          break;
+      }
+    }
+    
     uint32_t phase_accumulator;
     uint32_t phase_increment;
     uint32_t phase_offset;
@@ -299,5 +299,8 @@ class AudioSynthWaveformModulatedTS : public AudioStream
     int16_t   syncFlag;
 };
 
-
+inline float32_t round_f32(float32_t d)
+{
+  return floor(d + 0.5);
+}
 #endif

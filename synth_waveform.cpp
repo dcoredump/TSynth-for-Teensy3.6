@@ -32,7 +32,6 @@
 #include "arm_math.h"
 #include "utility/dspinst.h"
 
-
 // uncomment for more accurate but more computationally expensive frequency modulation
 #define IMPROVE_EXPONENTIAL_ACCURACY
 
@@ -179,13 +178,31 @@ void AudioSynthWaveformTS::update(void)
       }
       break;
     case WAVEFORM_FOURIER_SQUARE:
-      break;
     case WAVEFORM_FOURIER_TRIANGLE:
-      break;
     case WAVEFORM_FOURIER_SAWTOOTH:
-      break;
     case WAVEFORM_FOURIER_SAWTOOTH_REVERSE:
-      break;
+      // ===> x(t) = an * cos(2*PI*f*t)
+      float32_t ph_f = ph / 4294967296.0;
+      float32_t inc_f = inc / 4294967296.0;
+
+      for (i = 0; i < AUDIO_BLOCK_SAMPLES; i++)
+      {
+        for (uint8_t n = 0; n <= partial[tone_type - WAVEFORM_FOURIER_OFFSET]; n++)
+        {
+          if (tone_type == WAVEFORM_FOURIER_SQUARE || tone_type == WAVEFORM_FOURIER_TRIANGLE)
+            *bp = round_f32(waveform_partial[tone_type][n] * arm_cos_f32(2 * PI * ph_f) * 32768.0);
+          else if (tone_type == WAVEFORM_FOURIER_SAWTOOTH || tone_type == WAVEFORM_FOURIER_SAWTOOTH_REVERSE)
+          {
+            if (tone_type == WAVEFORM_FOURIER_SAWTOOTH)
+              *bp = round_f32(waveform_partial[tone_type][n] * arm_sin_f32(2 * PI * ph_f) * 32768.0);
+            else
+              *bp = round_f32(waveform_partial[tone_type][n] * arm_sin_f32(2 * PI * ph_f) * -32768.0);
+          }
+          *bp++;
+          ph_f += inc_f;
+        }
+        break;
+      }
   }
   phase_accumulator = ph - phase_offset;
 
