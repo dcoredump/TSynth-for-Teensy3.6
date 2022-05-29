@@ -198,11 +198,12 @@ void AudioSynthWaveformTS::update(void)
             else
               *bp = round_f32(waveform_partial[tone_type][n] * arm_sin_f32(2 * PI * ph_f) * -32768.0);
           }
-          *bp++;
-          ph_f += inc_f;
         }
-        break;
+        bp++;
+        ph_f += inc_f;
       }
+      ph = round_f32(ph_f * 4294967296.0);
+      break;
   }
   phase_accumulator = ph - phase_offset;
 

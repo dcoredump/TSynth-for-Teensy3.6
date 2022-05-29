@@ -778,7 +778,7 @@ int getLFOWaveform(int value)
   }
   else if (value >= 8 && value < 30)
   {
-    return WAVEFORM_TRIANGLE;
+    return WAVEFORM_FOURIER_TRIANGLE;
   }
   else if (value >= 30 && value < 63)
   {
@@ -811,7 +811,7 @@ String getWaveformStr(int value)
     case WAVEFORM_SQUARE_WT:
     case WAVEFORM_SQUARE:
       return "Square";
-    case WAVEFORM_TRIANGLE:
+    case WAVEFORM_FOURIER_TRIANGLE:
       return "Triangle";
     case WAVEFORM_SAWTOOTH_WT:
     case WAVEFORM_SAWTOOTH:
@@ -864,7 +864,7 @@ int getWaveformA(int value)
   }
   else if (value >= 7 && value < 23)
   {
-    return WAVEFORM_TRIANGLE;
+    return WAVEFORM_FOURIER_TRIANGLE;
   }
   else if (value >= 23 && value < 40)
   {
