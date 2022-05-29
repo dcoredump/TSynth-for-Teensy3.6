@@ -73,10 +73,10 @@ class AudioSynthWaveformTS : public AudioStream
       waveform_partial = new float32_t*[NUM_WAVEFORM_FOURIER];
 
       for (uint8_t i = 0; i < NUM_WAVEFORM_FOURIER; i++)
+      {
+        waveform_partial[i] = NULL;
         setNumPartials(i, DEFAULT_NUM_PARTIALS);
-      generatePartials(WAVEFORM_FOURIER_SQUARE);
-      generatePartials(WAVEFORM_FOURIER_TRIANGLE);
-      generatePartials(WAVEFORM_FOURIER_SAWTOOTH);
+      }
     }
 
     void setNumPartials(uint8_t waveform, uint8_t num)
@@ -84,11 +84,11 @@ class AudioSynthWaveformTS : public AudioStream
       waveform = constrain(waveform, 0, NUM_WAVEFORM_FOURIER);
       partial[waveform] = constrain(num, 2, MAX_NUM_PARTIALS);
 
-      if (waveform_partial[waveform])
-        delete(waveform_partial[waveform]);
+      //if (waveform_partial[waveform])
+      //delete(waveform_partial[waveform]);
 
       // get memory for partial parameters
-      waveform_partial[waveform] = new float32_t[partial[waveform]];
+      //waveform_partial[waveform] = new float32_t[partial[waveform]];
 
       generatePartials(waveform);
     }
@@ -200,7 +200,7 @@ class AudioSynthWaveformTS : public AudioStream
           break;
       }
     }
-    
+
     uint32_t phase_accumulator;
     uint32_t phase_increment;
     uint32_t phase_offset;

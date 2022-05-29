@@ -21,7 +21,7 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
   SOFTWARE.
 
-  ElectroTechnique TSynth - Firmware Rev 1.29
+  ElectroTechnique TSynth - Firmware Rev 1.30
 
   Includes code by:
     Dave Benn - Handling MUXs, a few other bits and original inspiration  https://www.notesandvolts.com/2019/01/teensy-synth-part-10-hardware.html
@@ -778,7 +778,7 @@ int getLFOWaveform(int value)
   }
   else if (value >= 8 && value < 30)
   {
-    return WAVEFORM_FOURIER_TRIANGLE;
+    return WAVEFORM_TRIANGLE;
   }
   else if (value >= 30 && value < 63)
   {

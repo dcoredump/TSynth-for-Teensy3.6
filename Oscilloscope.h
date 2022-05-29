@@ -54,7 +54,7 @@ void Oscilloscope::Display() {
 }
 
 void Oscilloscope::AddtoBuffer(int16_t *audio) {
-  const int16_t *begin = audio;
+  //const int16_t *begin = audio;
   const int16_t *end = audio + AUDIO_BLOCK_SAMPLES;
   __disable_irq();
   do {
