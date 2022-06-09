@@ -175,13 +175,13 @@ class AudioSynthWaveformTS : public AudioStream
             if ((i % 2) == 0)
               waveform_partial[WAVEFORM_FOURIER_TRIANGLE - WAVEFORM_FOURIER_OFFSET][i] = 0.0;
             else
-              waveform_partial[WAVEFORM_FOURIER_TRIANGLE - WAVEFORM_FOURIER_OFFSET][i] = 4.0 * (1 - pow(-1, i)) / powf(i, 2) * powf(PI, 2);
+              waveform_partial[WAVEFORM_FOURIER_TRIANGLE - WAVEFORM_FOURIER_OFFSET][i] = 4.0 * (1 - powf(-1, i)) / powf(i, 2) * powf(PI, 2);
           }
           break;
         case WAVEFORM_FOURIER_SAWTOOTH:
           /* bn = ((2*A)/(n*PI))*(-1)^n */
           for (uint8_t i = 0; i < partial[waveform - WAVEFORM_FOURIER_OFFSET]; i++)
-            waveform_partial[WAVEFORM_FOURIER_SAWTOOTH - WAVEFORM_FOURIER_OFFSET][i] = 2.0 / (i * PI) * pow(-1, i);
+            waveform_partial[WAVEFORM_FOURIER_SAWTOOTH - WAVEFORM_FOURIER_OFFSET][i] = 2.0 / (i * PI) * powf(-1, i);
           break;
       }
     }

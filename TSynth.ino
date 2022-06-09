@@ -778,19 +778,23 @@ int getLFOWaveform(int value)
   }
   else if (value >= 8 && value < 30)
   {
-    return WAVEFORM_TRIANGLE;
+    //return WAVEFORM_TRIANGLE;
+    return WAVEFORM_FOURIER_TRIANGLE;
   }
   else if (value >= 30 && value < 63)
   {
-    return WAVEFORM_SAWTOOTH_REVERSE;
+    //return WAVEFORM_SAWTOOTH_REVERSE;
+    return WAVEFORM_FOURIER_SAWTOOTH_REVERSE;
   }
   else if (value >= 63 && value < 92)
   {
-    return WAVEFORM_SAWTOOTH;
+    //return WAVEFORM_SAWTOOTH;
+    return WAVEFORM_FOURIER_SAWTOOTH;
   }
   else if (value >= 92 && value < 111)
   {
-    return WAVEFORM_SQUARE;
+    //return WAVEFORM_SQUARE;
+    return WAVEFORM_FOURIER_SQUARE;
   }
   else
   {
@@ -810,13 +814,17 @@ String getWaveformStr(int value)
       return "Sine";
     case WAVEFORM_SQUARE_WT:
     case WAVEFORM_SQUARE:
+    case WAVEFORM_FOURIER_SQUARE:
       return "Square";
+    case WAVEFORM_TRIANGLE:
     case WAVEFORM_FOURIER_TRIANGLE:
       return "Triangle";
     case WAVEFORM_SAWTOOTH_WT:
     case WAVEFORM_SAWTOOTH:
+    case WAVEFORM_FOURIER_SAWTOOTH:
       return "Sawtooth";
     case WAVEFORM_SAWTOOTH_REVERSE:
+    case WAVEFORM_FOURIER_SAWTOOTH_REVERSE:
       return "Ramp";
     case WAVEFORM_PULSE:
       return "Var. Pulse";
@@ -864,7 +872,7 @@ int getWaveformA(int value)
   }
   else if (value >= 7 && value < 23)
   {
-    return WAVEFORM_FOURIER_TRIANGLE;
+    return WAVEFORM_TRIANGLE;
   }
   else if (value >= 23 && value < 40)
   {
